@@ -1,6 +1,6 @@
-import * as dotenv from "dotenv";
-import { createError } from "../error.js";
-import { Configuration, OpenAIApi } from "openai";
+const dotenv = require("dotenv");
+const { createError } = require("../error");
+const { Configuration, OpenAIApi } = require("openai");
 
 dotenv.config();
 
@@ -11,7 +11,7 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 // Controller to generate Image
-export const generateImage = async (req, res, next) => {
+const generateImage = async (req, res, next) => {
   try {
     const { prompt } = req.body;
 
@@ -21,6 +21,7 @@ export const generateImage = async (req, res, next) => {
       size: "1024x1024",
       response_format: "b64_json",
     });
+
     const generatedImage = response.data.data[0].b64_json;
     res.status(200).json({ photo: generatedImage });
   } catch (error) {
@@ -31,4 +32,8 @@ export const generateImage = async (req, res, next) => {
       )
     );
   }
+};
+
+module.exports = {
+  generateImage,
 };

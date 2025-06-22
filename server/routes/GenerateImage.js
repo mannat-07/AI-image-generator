@@ -1,8 +1,8 @@
-import express from "express";
-import { generateImage } from "../controllers/GenerateImage.js";
+const express = require("express");
+const { generateImage } = require("../controllers/GenerateImage");
 
 const router = express.Router();
 
 router.post("/", generateImage);
 
-export default router;
+module.exports = router;

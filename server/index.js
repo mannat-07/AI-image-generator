@@ -1,9 +1,9 @@
-import express from "express";
-import * as dotenv from "dotenv";
-import cors from "cors";
-import mongoose from "mongoose";
-import generateImageRoute from "./routes/GenerateImage.js";
-import posts from "./routes/Posts.js";
+const express = require("express");
+const dotenv = require("dotenv");
+const cors = require("cors");
+const mongoose = require("mongoose");
+const generateImageRoute = require("./routes/GenerateImage");
+const posts = require("./routes/Posts");
 
 dotenv.config();
 
