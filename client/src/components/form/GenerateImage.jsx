@@ -16,7 +16,6 @@ const Form = styled.div`
   border-radius: 24px;
   background: ${({ theme }) => theme.bgLight};
   box-shadow: 0 8px 32px ${({ theme }) => theme.shadow};
-  transition: all 0.3s ease;
 `;
 
 const Top = styled.div`
@@ -29,8 +28,6 @@ const Title = styled.div`
   font-size: 30px;
   font-weight: 600;
   color: ${({ theme }) => theme.primary};
-  text-shadow: 1px 1px 6px ${({ theme }) => theme.shadow};
-  transition: 0.3s ease;
 `;
 
 const Desc = styled.div`
@@ -82,13 +79,15 @@ const GenerateImage = ({
     setGenerateImageLoading(true);
     setError("");
     try {
+      console.log("Sending prompt:", post.prompt);
       const res = await GenerateImageFromPrompt({ prompt: post.prompt });
       setPost({
         ...post,
         photo: `data:image/jpeg;base64,${res?.data?.photo}`,
       });
     } catch (error) {
-      setError(error?.response?.data?.message);
+      console.error("Frontend error:", error);
+      setError(error?.response?.data?.message || "Something went wrong");
     }
     setGenerateImageLoading(false);
   };
@@ -100,7 +99,7 @@ const GenerateImage = ({
       await CreatePost(post);
       navigate("/");
     } catch (error) {
-      setError(error?.response?.data?.message);
+      setError(error?.response?.data?.message || "Failed to post image");
     }
     setcreatePostLoading(false);
   };
