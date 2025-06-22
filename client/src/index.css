@@ -8,30 +8,117 @@ body,
   margin: 0;
   padding: 0;
   font-family: "Poppins", sans-serif;
+  background: #1e1e2f; /* Dark background for modern look */
+  color: #e0e0e0;      /* Soft light text */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 html {
   scroll-behavior: smooth;
 }
 
-/* width */
+/* Scrollbar Styling */
 ::-webkit-scrollbar {
-  width: 4px;
-  height: 0px;
+  width: 8px;
+  height: 8px;
 }
 
-/* Track */
 ::-webkit-scrollbar-track {
-  background: #222a35;
+  background: #2a2f45;
+  border-radius: 10px;
 }
 
-/* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #575c66;
-  border-radius: 6px;
+  background: #6c75a0;
+  border-radius: 10px;
+  transition: background-color 0.3s ease;
 }
 
-/* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #626970;
+  background: #8d98cc;
+}
+
+/* Base link styles */
+a {
+  color: #82aaff;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: #4c6ef5;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  margin: 0 0 1rem 0;
+  color: #f8f9fa;
+}
+
+/* Paragraphs */
+p {
+  font-weight: 300;
+  line-height: 1.6;
+  margin-bottom: 1.2rem;
+  color: #cbd5e1;
+}
+
+/* Buttons */
+button {
+  background-color: #4c6ef5;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(76, 110, 245, 0.3);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+button:hover {
+  background-color: #3954db;
+  box-shadow: 0 6px 20px rgba(57, 84, 219, 0.5);
+}
+
+/* Containers */
+.container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+/* Cards */
+.card {
+  background-color: #2a2f45;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+/* Inputs */
+input,
+textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border: 1px solid #4c4c6f;
+  background-color: #1e213a;
+  color: #e0e0e0;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+input:focus,
+textarea:focus {
+  outline: none;
+  border-color: #82aaff;
+  box-shadow: 0 0 8px rgba(130, 170, 255, 0.6);
 }
