@@ -1,5 +1,5 @@
 import styled, { ThemeProvider } from "styled-components";
-import { darkTheme } from "./utils/Theme";
+import { bubbleDarkTheme } from "./utils/Theme";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
@@ -27,7 +27,7 @@ const Wrapper = styled.div`
 
 function App() {
   return (
-    <ThemeProvider theme={darkTheme}>
+    <ThemeProvider theme={bubbleDarkTheme}>
       <Container>
         <Wrapper>
           <BrowserRouter>
