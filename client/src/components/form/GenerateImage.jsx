@@ -8,11 +8,15 @@ import { CreatePost, GenerateImageFromPrompt } from "../../api";
 
 const Form = styled.div`
   flex: 1;
-  padding: 16px 20px;
+  padding: 24px 32px;
   display: flex;
   flex-direction: column;
-  gap: 9%;
+  gap: 10%;
   justify-content: center;
+  border-radius: 24px;
+  background: ${({ theme }) => theme.bgLight};
+  box-shadow: 0 8px 32px ${({ theme }) => theme.shadow};
+  transition: all 0.3s ease;
 `;
 
 const Top = styled.div`
@@ -22,30 +26,45 @@ const Top = styled.div`
 `;
 
 const Title = styled.div`
-  font-size: 28px;
-  font-weight: 500;
-  color: ${({ theme }) => theme.text_primary};
+  font-size: 30px;
+  font-weight: 600;
+  color: ${({ theme }) => theme.primary};
+  text-shadow: 1px 1px 6px ${({ theme }) => theme.shadow};
+  transition: 0.3s ease;
 `;
 
 const Desc = styled.div`
   font-size: 17px;
   font-weight: 400;
   color: ${({ theme }) => theme.text_secondary};
+  opacity: 0.8;
 `;
 
 const Body = styled.div`
   display: flex;
   flex-direction: column;
   gap: 18px;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 400;
   color: ${({ theme }) => theme.text_secondary};
+`;
+
+const Error = styled.div`
+  color: ${({ theme }) => theme.red};
+  font-weight: 500;
+  animation: fadeIn 0.4s ease-in-out;
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 `;
 
 const Actions = styled.div`
   display: flex;
   flex: 1;
-  gap: 8px;
+  gap: 12px;
+  flex-wrap: wrap;
 `;
 
 const GenerateImage = ({
@@ -62,41 +81,37 @@ const GenerateImage = ({
   const generateImage = async () => {
     setGenerateImageLoading(true);
     setError("");
-    await GenerateImageFromPrompt({ prompt: post.prompt })
-      .then((res) => {
-        setPost({
-          ...post,
-          photo: `data:image/jpeg;base64,${res?.data?.photo}`,
-        });
-        setGenerateImageLoading(false);
-      })
-      .catch((error) => {
-        setError(error?.response?.data?.message);
-        setGenerateImageLoading(false);
+    try {
+      const res = await GenerateImageFromPrompt({ prompt: post.prompt });
+      setPost({
+        ...post,
+        photo: `data:image/jpeg;base64,${res?.data?.photo}`,
       });
+    } catch (error) {
+      setError(error?.response?.data?.message);
+    }
+    setGenerateImageLoading(false);
   };
+
   const createPost = async () => {
     setcreatePostLoading(true);
     setError("");
-    await CreatePost(post)
-      .then((res) => {
-        navigate("/");
-        setcreatePostLoading(false);
-      })
-      .catch((error) => {
-        setError(error?.response?.data?.message);
-        setcreatePostLoading(false);
-      });
+    try {
+      await CreatePost(post);
+      navigate("/");
+    } catch (error) {
+      setError(error?.response?.data?.message);
+    }
+    setcreatePostLoading(false);
   };
 
   return (
     <Form>
       <Top>
-        <Title>Generate Image with prompt</Title>
-        <Desc>
-          Write your prompt according to the image you want to generate!
-        </Desc>
+        <Title>🪄 Generate Image with Prompt</Title>
+        <Desc>Describe the image you want — AI will bring it to life!</Desc>
       </Top>
+
       <Body>
         <TextInput
           label="Author"
@@ -114,9 +129,12 @@ const GenerateImage = ({
           value={post.prompt}
           handelChange={(e) => setPost({ ...post, prompt: e.target.value })}
         />
-        {error && <div style={{ color: "red" }}>{error}</div>}* You can post the
-        AI Generated Image to showcase in the community!
+        {error && <Error>⚠️ {error}</Error>}
+        <div style={{ fontSize: "13px", color: "#999" }}>
+          * You can post the AI Generated Image to showcase in the community!
+        </div>
       </Body>
+
       <Actions>
         <Button
           text="Generate Image"
@@ -124,7 +142,7 @@ const GenerateImage = ({
           flex
           isLoading={generateImageLoading}
           isDisabled={post.prompt === ""}
-          onClick={(e) => generateImage()}
+          onClick={generateImage}
         />
         <Button
           text="Post Image"
@@ -135,7 +153,7 @@ const GenerateImage = ({
             post.name === "" || post.photo === "" || post.prompt === ""
           }
           isLoading={createPostLoading}
-          onClick={() => createPost()}
+          onClick={createPost}
         />
       </Actions>
     </Form>

@@ -5,41 +5,43 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import { Avatar } from "@mui/material";
 import { DownloadRounded } from "@mui/icons-material";
 
+// Card wrapper with bubble glow and animation
 const Card = styled.div`
   position: relative;
   display: flex;
+  flex-direction: column;
   background: ${({ theme }) => theme.card};
   border-radius: 20px;
-  box-shadow: 1px 2px 40px 8px ${({ theme }) => theme.black + 60};
+  box-shadow: 0 8px 24px ${({ theme }) => theme.shadow};
   gap: 10px;
+  overflow: hidden;
   cursor: pointer;
   transition: all 0.3s ease;
+
   &:hover {
-    box-shadow: 1px 2px 40px 8px ${({ theme }) => theme.black + 80};
-    scale: 1.05;
+    box-shadow: 0 12px 32px ${({ theme }) => theme.shadow};
+    transform: scale(1.04);
   }
+
   &:nth-child(7n + 1) {
-    grid-column: auto/span 2;
-    grid-row: auto/span 2;
+    grid-column: auto / span 2;
+    grid-row: auto / span 2;
   }
 `;
 
+// Blur + soft pastel overlay
 const HoverOverlay = styled.div`
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   display: flex;
-  align-items: start;
-  gap: 2px;
-  justify-content: end;
+  align-items: end;
   flex-direction: column;
-  backdrop-filter: blur(2px);
-  background: rgba(0, 0, 0, 0.5);
-  border-radius: 6px;
-  opacity: 0;
+  justify-content: space-between;
+  backdrop-filter: blur(6px);
+  background: rgba(0, 0, 0, 0.35);
   padding: 16px;
+  opacity: 0;
+  border-radius: 20px;
   transition: opacity 0.3s ease;
   color: ${({ theme }) => theme.white};
 
@@ -51,28 +53,36 @@ const HoverOverlay = styled.div`
 const Prompt = styled.div`
   font-weight: 400;
   font-size: 15px;
-  color: ${({ theme }) => theme.white};
+  color: ${({ theme }) => theme.text_primary};
+  background: ${({ theme }) => theme.bgDark + "cc"};
+  padding: 6px 12px;
+  border-radius: 12px;
+  margin-bottom: 8px;
 `;
+
 const Author = styled.div`
   font-weight: 600;
   font-size: 14px;
   display: flex;
   gap: 8px;
   align-items: center;
-  color: ${({ theme }) => theme.white};
+  color: ${({ theme }) => theme.text_primary};
+  background: ${({ theme }) => theme.bgDark + "cc"};
+  padding: 6px 10px;
+  border-radius: 12px;
 `;
 
-const ImageCard = ({ item, heights }) => {
+const ImageCard = ({ item }) => {
   return (
     <Card>
       <LazyLoadImage
         alt={item?.prompt}
         width="100%"
         src={item?.photo}
-        style={{ borderRadius: "12px" }}
+        style={{ borderRadius: "20px", objectFit: "cover" }}
       />
       <HoverOverlay>
-        <Prompt>• {item?.prompt}</Prompt>
+        <Prompt>📝 {item?.prompt}</Prompt>
         <div
           style={{
             width: "100%",
@@ -82,12 +92,19 @@ const ImageCard = ({ item, heights }) => {
           }}
         >
           <Author>
-            <Avatar sx={{ background: "green", width: "32px", height: "32px" }}>
+            <Avatar
+              sx={{
+                background: (theme) => theme.palette.success.main,
+                width: "32px",
+                height: "32px",
+              }}
+            >
               {item?.name[0]}
-            </Avatar>{" "}
+            </Avatar>
             {item?.name}
           </Author>
           <DownloadRounded
+            sx={{ cursor: "pointer", fontSize: 24 }}
             onClick={() => FileSaver.saveAs(item?.photo, `download.jpg`)}
           />
         </div>

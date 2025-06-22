@@ -1,44 +1,45 @@
+import React, { useState } from "react";
 import styled, { ThemeProvider } from "styled-components";
-import { bubbleDarkTheme } from "./utils/Theme";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { bubbleDarkTheme, bubbleLightTheme } from "./utils/Theme";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import CreatePost from "./pages/CreatePost";
 
 const Container = styled.div`
   width: 100%;
-  height: 100vh;
-  display: flex;
+  min-height: 100vh;
   background: ${({ theme }) => theme.bg};
   color: ${({ theme }) => theme.text_primary};
   overflow-x: hidden;
-  overflow-y: hidden;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
 `;
 
 const Wrapper = styled.div`
-  height: 100%;
-  position: relative;
+  width: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  flex: 3;
+  min-height: 100vh;
 `;
 
 function App() {
+  // Optional: Add theme toggle
+  const [isDark] = useState(true);
+
   return (
-    <ThemeProvider theme={bubbleDarkTheme}>
-      <Container>
-        <Wrapper>
-          <BrowserRouter>
+    <ThemeProvider theme={isDark ? bubbleDarkTheme : bubbleLightTheme}>
+      <BrowserRouter>
+        <Container>
+          <Wrapper>
             <Navbar />
             <Routes>
-              <Route path="/" exact element={<Home />} />
-              <Route path="/post" exact element={<CreatePost />} />
+              <Route path="/" element={<Home />} />
+              <Route path="/post" element={<CreatePost />} />
             </Routes>
-          </BrowserRouter>
-        </Wrapper>
-      </Container>
+          </Wrapper>
+        </Container>
+      </BrowserRouter>
     </ThemeProvider>
   );
 }

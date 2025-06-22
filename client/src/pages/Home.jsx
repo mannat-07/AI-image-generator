@@ -6,39 +6,61 @@ import { GetPosts } from "../api";
 import { CircularProgress } from "@mui/material";
 
 const Container = styled.div`
-  padding: 30px 30px;
-  padding-bottom: 200px;
-  height: 100%;
-  overflow-y: scroll;
+  padding: 30px 30px 160px;
+  min-height: 100%;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
+  background: ${({ theme }) => theme.bg};
+  background-image: radial-gradient(
+      circle at 20% 20%,
+      ${({ theme }) => theme.bgDark + "33"},
+      transparent
+    ),
+    radial-gradient(
+      circle at 80% 80%,
+      ${({ theme }) => theme.bgLight + "33"},
+      transparent
+    );
+  animation: fadeIn 0.5s ease;
+
   @media (max-width: 768px) {
-    padding: 6px 10px;
+    padding: 16px 10px 100px;
   }
-  background: ${({ theme }) => theme.background};
 `;
 
 const HeadLine = styled.div`
-  font-size: 34px;
-  font-weight: 500;
+  font-size: 30px;
+  font-weight: 600;
+  text-align: center;
   color: ${({ theme }) => theme.text_primary};
   display: flex;
-  align-items: center;
   flex-direction: column;
+  gap: 6px;
+
+  @media (max-width: 600px) {
+    font-size: 22px;
+  }
 `;
 
 const Span = styled.div`
-  font-size: 30px;
+  font-size: 28px;
   font-weight: 800;
-  color: ${({ theme }) => theme.secondary};
+  background: linear-gradient(
+    90deg,
+    ${({ theme }) => theme.primary},
+    ${({ theme }) => theme.secondary}
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: float 2s ease-in-out infinite;
 `;
 
 const Wrapper = styled.div`
   width: 100%;
   max-width: 1400px;
-  padding: 32px 0px;
+  padding: 32px 0;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -46,7 +68,7 @@ const Wrapper = styled.div`
 
 const CardWrapper = styled.div`
   display: grid;
-  gap: 20px;
+  gap: 24px;
 
   @media (min-width: 1200px) {
     grid-template-columns: repeat(4, 1fr);
@@ -93,7 +115,6 @@ const Home = () => {
     const filteredPosts = posts.filter((post) => {
       const promptMatch = post?.prompt?.toLowerCase().includes(search);
       const authorMatch = post?.author?.toLowerCase().includes(search);
-
       return promptMatch || authorMatch;
     });
 
@@ -105,7 +126,7 @@ const Home = () => {
   return (
     <Container>
       <HeadLine>
-        Explore popular posts in the Community!
+        Explore Popular Posts in the Community!
         <Span>⦾ Generated with AI ⦾</Span>
       </HeadLine>
       <SearchBar
@@ -115,20 +136,16 @@ const Home = () => {
       <Wrapper>
         {error && <div style={{ color: "red" }}>{error}</div>}
         {loading ? (
-          <CircularProgress />
+          <CircularProgress sx={{ color: "var(--primary)", marginTop: "32px" }} />
         ) : (
           <CardWrapper>
             {filteredPost.length > 0 ? (
-              <>
-                {filteredPost
-                  .slice()
-                  .reverse()
-                  .map((item, index) => (
-                    <ImageCard key={index} item={item} />
-                  ))}
-              </>
+              filteredPost
+                .slice()
+                .reverse()
+                .map((item, index) => <ImageCard key={index} item={item} />)
             ) : (
-              <>No Posts Found !!</>
+              <>No Posts Found!!</>
             )}
           </CardWrapper>
         )}

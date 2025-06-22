@@ -5,38 +5,56 @@ const Container = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 `;
 
 const Label = styled.label`
   font-size: 12px;
-  color: ${({ theme }) => theme.text_secondary};
+  font-weight: 500;
+  color: ${({ theme }) => theme.menu_secondary_text};
   padding: 0px 4px;
   text-transform: uppercase;
+  transition: 0.3s;
+  letter-spacing: 0.8px;
+
+  &:hover {
+    color: ${({ theme }) => theme.primary};
+  }
 `;
 
 const OutlinedInput = styled.div`
-  border-radius: 8px;
-  border: 0.5px solid ${({ theme }) => theme.text_secondary + 70};
-  background-color: transparent;
-  color: ${({ theme }) => theme.text_secondary};
-  outline: none;
-  padding: 14px;
+  border-radius: 16px;
+  border: 1.2px solid ${({ theme }) => theme.text_secondary + "66"};
+  background-color: ${({ theme }) => theme.card_light};
+  color: ${({ theme }) => theme.text_primary};
+  padding: 14px 18px;
   display: flex;
   align-items: center;
-  gap: 12px;
+  transition: 0.25s ease;
+  box-shadow: 0 4px 12px ${({ theme }) => theme.shadow};
+
   &:focus-within {
     border-color: ${({ theme }) => theme.primary};
+    box-shadow: 0 0 16px ${({ theme }) => theme.primary + "55"};
   }
 `;
 
 const Input = styled.input`
   width: 100%;
-  font-size: 14px;
+  font-size: 15px;
+  font-weight: 400;
   outline: none;
   border: none;
+  resize: none;
   background-color: transparent;
-  color: ${({ theme }) => theme.text_secondary};
+  color: ${({ theme }) => theme.text_primary};
+
+  &::placeholder {
+    color: ${({ theme }) => theme.text_secondary + "99"};
+    font-style: italic;
+    opacity: 0.7;
+  }
+
   &:focus {
     outline: none;
   }

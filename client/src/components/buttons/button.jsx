@@ -1,10 +1,16 @@
 import { CircularProgress } from "@mui/material";
 import React from "react";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
+
+// Bubble hover effect animation
+const bubbleGlow = keyframes`
+  0% { box-shadow: 0 0 0px rgba(255,255,255, 0.3); }
+  100% { box-shadow: 0 0 20px rgba(255,255,255, 0.5); }
+`;
 
 const Button = styled.div`
-  border-radius: 10px;
-  color: white;
+  border-radius: 30px;
+  color: ${({ theme }) => theme.white};
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -13,42 +19,45 @@ const Button = styled.div`
   align-items: center;
   justify-content: center;
   gap: 6px;
-  height: min-content;
-  padding: 10px 24px;
+  padding: 12px 28px;
+  margin-right: 50px;
+  background: ${({ type, theme }) =>
+    type === "secondary" ? theme.secondary : theme.primary};
+  box-shadow: 0 4px 20px ${({ theme }) => theme.shadow};
+  position: relative;
+  overflow: hidden;
+
   @media (max-width: 600px) {
-    padding: 8px 12px;
+    padding: 10px 20px;
   }
 
-  ${({ type, theme }) =>
-    type === "secondary"
-      ? `
-  background: ${theme.secondary};
-  `
-      : `
-  background: ${theme.primary};
-`}
+  &:hover {
+    transform: scale(1.05) rotate(0.5deg);
+    animation: ${bubbleGlow} 0.6s ease-in-out forwards;
+  }
 
   ${({ isDisabled }) =>
     isDisabled &&
     `
-  opacity: 0.4;
-  cursor: not-allowed;
-
+    opacity: 0.4;
+    cursor: not-allowed;
   `}
+  
   ${({ isLoading }) =>
     isLoading &&
     `
     opacity: 0.8;
-  cursor: not-allowed;
-`}
-${({ flex }) =>
+    cursor: not-allowed;
+  `}
+  
+  ${({ flex }) =>
     flex &&
     `
     flex: 1;
-`}
+  `}
 `;
 
-const button = ({
+const BubbleButton = ({
   text,
   isLoading,
   isDisabled,
@@ -62,8 +71,8 @@ const button = ({
     <Button
       onClick={() => !isDisabled && !isLoading && onClick()}
       isDisabled={isDisabled}
-      type={type}
       isLoading={isLoading}
+      type={type}
       flex={flex}
     >
       {isLoading && (
@@ -79,4 +88,4 @@ const button = ({
   );
 };
 
-export default button;
+export default BubbleButton;
