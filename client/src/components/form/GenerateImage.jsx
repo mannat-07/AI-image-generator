@@ -83,8 +83,9 @@ const GenerateImage = ({
       const res = await GenerateImageFromPrompt({ prompt: post.prompt });
       setPost({
         ...post,
-        photo: `data:image/jpeg;base64,${res?.data?.photo}`,
+        photo: res?.data?.photo, 
       });
+
     } catch (error) {
       console.error("Frontend error:", error);
       setError(error?.response?.data?.message || "Something went wrong");
