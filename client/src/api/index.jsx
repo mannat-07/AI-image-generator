@@ -13,7 +13,7 @@ const API = axios.create({
 });
 
 export const GetPosts = async () => {
-  return await API.get("/post/");
+  return await API.get("api/post/");
 };
 
 export const CreatePost = async (data) => {
