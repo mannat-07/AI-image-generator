@@ -86,6 +86,7 @@ const generateImage = async () => {
     setError("");
     try {
       const res = await GenerateImageFromPrompt({ prompt: post.prompt });
+<<<<<<< HEAD
 
       if (res?.data?.photo) {
         setPost({
@@ -95,6 +96,13 @@ const generateImage = async () => {
       } else {
         throw new Error("No image data received from API");
       }
+=======
+      setPost({
+        ...post,
+        photo: res?.data?.photo, 
+      });
+
+>>>>>>> 4e823b1be82f0f57be95a5fd4afd12306d86b7e7
     } catch (error) {
       console.error("Frontend error:", error);
       let errorMessage = "Failed to generate image";
