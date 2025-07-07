@@ -17,10 +17,10 @@ export const GetPosts = async () => {
 };
 
 export const CreatePost = async (data) => {
-  return await API.post("/post/", data);
+  return await API.post("api/post/", data);
 };
 
 export const GenerateImageFromPrompt = async (data) => {
   console.log("API call data:", data);
-  return await API.post("/generateImage/", data);
+  return await API.post("api/generateImage/", data);
 };
