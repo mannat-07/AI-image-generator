@@ -52,8 +52,14 @@ const Error = styled.div`
   animation: fadeIn 0.4s ease-in-out;
 
   @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-4px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 `;
 
@@ -75,21 +81,38 @@ const GenerateImage = ({
   const navigate = useNavigate();
   const [error, setError] = useState("");
 
-  const generateImage = async () => {
+const generateImage = async () => {
     setGenerateImageLoading(true);
     setError("");
     try {
-      console.log("Sending prompt:", post.prompt);
       const res = await GenerateImageFromPrompt({ prompt: post.prompt });
-      setPost({
-        ...post,
-        photo: `data:image/jpeg;base64,${res?.data?.photo}`,
-      });
+
+      if (res?.data?.photo) {
+        setPost({
+          ...post,
+          photo: res.data.photo,
+        });
+      } else {
+        throw new Error("No image data received from API");
+      }
     } catch (error) {
       console.error("Frontend error:", error);
-      setError(error?.response?.data?.message || "Something went wrong");
+      let errorMessage = "Failed to generate image";
+      if (error.response) {
+        errorMessage =
+          error.response.data?.message ||
+          `Server error: ${error.response.status}`;
+      } else if (error.request) {
+        errorMessage = "No response from server. Please check your connection.";
+      } else {
+        errorMessage = error.message;
+      }
+      setError(errorMessage);
+    } finally {
+      // This is the crucial part:
+      // Ensure the loading state is turned off after the attempt.
+      setGenerateImageLoading(false);
     }
-    setGenerateImageLoading(false);
   };
 
   const createPost = async () => {

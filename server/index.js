@@ -8,9 +8,28 @@ const posts = require("./routes/Posts");
 dotenv.config();
 
 const app = express();
-app.use(cors({ origin: "http://localhost:3000" }));
+
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://mannat-ai-image.netlify.app",
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) === -1) {
+        const msg =
+          "The CORS policy for this site does not allow access from the specified Origin.";
+        return callback(new Error(msg), false);
+      }
+      return callback(null, true);
+    },
+    credentials: true,
+  })
+);
 app.use(express.json({ limit: "50mb" }));
-app.use(express.urlencoded({ extended: true })); // for form data
+app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/generateImage/", generateImageRoute);
 app.use("/api/post/", posts);
@@ -46,7 +65,9 @@ const connectDB = () => {
 const startServer = async () => {
   try {
     connectDB();
-    app.listen(8080, () => console.log("Server started on http://localhost:8080"));
+    app.listen(8080, () =>
+      console.log("Server started on http://localhost:8080")
+    );
   } catch (error) {
     console.log(error);
   }
