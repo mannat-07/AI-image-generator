@@ -21,7 +21,8 @@ const Button = styled.button`
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 12px 28px;
+  padding: 10px 24px;
+  margin-right: 56px;
   background: ${({ $variant, theme }) =>
     $variant === "secondary" ? theme.secondary : theme.primary};
   box-shadow: 0 4px 20px ${({ theme }) => theme.shadow};
@@ -29,7 +30,8 @@ const Button = styled.button`
   overflow: hidden;
 
   @media (max-width: 600px) {
-    padding: 10px 20px;
+    padding: 9px 16px;
+    margin-right: 24px;
   }
 
   &:hover {
