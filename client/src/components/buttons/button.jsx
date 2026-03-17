@@ -8,7 +8,9 @@ const bubbleGlow = keyframes`
   100% { box-shadow: 0 0 20px rgba(255,255,255, 0.5); }
 `;
 
-const Button = styled.div`
+const Button = styled.button`
+  appearance: none;
+  border: none;
   border-radius: 30px;
   color: ${({ theme }) => theme.white};
   font-size: 14px;
@@ -20,9 +22,8 @@ const Button = styled.div`
   justify-content: center;
   gap: 6px;
   padding: 12px 28px;
-  margin-right: 50px;
-  background: ${({ type, theme }) =>
-    type === "secondary" ? theme.secondary : theme.primary};
+  background: ${({ $variant, theme }) =>
+    $variant === "secondary" ? theme.secondary : theme.primary};
   box-shadow: 0 4px 20px ${({ theme }) => theme.shadow};
   position: relative;
   overflow: hidden;
@@ -34,6 +35,11 @@ const Button = styled.div`
   &:hover {
     transform: scale(1.05) rotate(0.5deg);
     animation: ${bubbleGlow} 0.6s ease-in-out forwards;
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.white};
+    outline-offset: 3px;
   }
 
   ${({ isDisabled }) =>
@@ -63,16 +69,17 @@ const BubbleButton = ({
   isDisabled,
   rightIcon,
   leftIcon,
-  type,
+  variant,
   onClick,
   flex,
 }) => {
   return (
     <Button
+      type="button"
       onClick={() => !isDisabled && !isLoading && onClick()}
       isDisabled={isDisabled}
       isLoading={isLoading}
-      type={type}
+      $variant={variant}
       flex={flex}
     >
       {isLoading && (

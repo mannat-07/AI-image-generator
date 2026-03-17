@@ -8,6 +8,7 @@ const posts = require("./routes/Posts");
 dotenv.config();
 
 const app = express();
+const PORT = process.env.PORT || 8080;
 
 const allowedOrigins = [
   "http://localhost:3000",
@@ -51,25 +52,34 @@ app.get("/", async (req, res) => {
   });
 });
 
-const connectDB = () => {
+const connectDB = async () => {
   mongoose.set("strictQuery", true);
-  mongoose
-    .connect(process.env.MONGODB_URL)
-    .then(() => console.log("Connected to Mongo DB"))
-    .catch((err) => {
-      console.error("failed to connect with mongo");
-      console.error(err);
+  if (!process.env.MONGODB_URL) {
+    console.error("MONGODB_URL is not configured");
+    return;
+  }
+
+  try {
+    await mongoose.connect(process.env.MONGODB_URL.trim(), {
+      serverSelectionTimeoutMS: 10000,
     });
+    console.log("Connected to Mongo DB");
+  } catch (error) {
+    console.error("Failed to connect to Mongo DB");
+    console.error(error.message);
+  }
 };
 
 const startServer = async () => {
   try {
-    connectDB();
-    app.listen(8080, () =>
-      console.log("Server started on http://localhost:8080")
+    app.listen(PORT, () =>
+      console.log(`Server started on http://localhost:${PORT}`)
     );
+    connectDB();
   } catch (error) {
-    console.log(error);
+    console.error("Failed to start server");
+    console.error(error);
+    process.exit(1);
   }
 };
 

@@ -5,6 +5,30 @@ const FormData = require("form-data");
 
 dotenv.config();
 
+const getErrorPayload = (data) => {
+  if (!data) {
+    return null;
+  }
+
+  if (Buffer.isBuffer(data)) {
+    try {
+      return JSON.parse(data.toString("utf-8"));
+    } catch (error) {
+      return { message: data.toString("utf-8") };
+    }
+  }
+
+  if (typeof data === "string") {
+    try {
+      return JSON.parse(data);
+    } catch (error) {
+      return { message: data };
+    }
+  }
+
+  return data;
+};
+
 const generateImage = async (req, res, next) => {
   if (!process.env.STABILITY_API_KEY) {
     return next(createError(500, "Server configuration error: Missing API Key."));
@@ -45,10 +69,13 @@ const generateImage = async (req, res, next) => {
     res.status(200).json({ photo: `data:image/jpeg;base64,${base64Image}` });
   } catch (error) {
     const statusCode = error.response?.status || 500;
+    const errorPayload = getErrorPayload(error.response?.data);
     const message =
-      error.response?.data?.message ||
-      (error.response?.data?.errors && error.response.data.errors.join(", ")) ||
-      "An unknown error occurred while generating the image.";
+      errorPayload?.message ||
+      (Array.isArray(errorPayload?.errors) && errorPayload.errors.join(", ")) ||
+      (statusCode === 402
+        ? "Stability AI rejected the request with a payment-required response. Check your API credits or billing status."
+        : "An unknown error occurred while generating the image.");
 
     next(createError(statusCode, message));
   }

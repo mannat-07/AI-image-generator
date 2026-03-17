@@ -70,6 +70,21 @@ const Actions = styled.div`
   flex-wrap: wrap;
 `;
 
+const getClientErrorMessage = (error, fallbackMessage) => {
+  if (error.response) {
+    return (
+      error.response.data?.message ||
+      `Server error: ${error.response.status}`
+    );
+  }
+
+  if (error.request) {
+    return "Server is offline or unreachable. Start the backend on port 8080 and try again.";
+  }
+
+  return error.message || fallbackMessage;
+};
+
 const GenerateImage = ({
   createPostLoading,
   setcreatePostLoading,
@@ -81,7 +96,7 @@ const GenerateImage = ({
   const navigate = useNavigate();
   const [error, setError] = useState("");
 
-const generateImage = async () => {
+  const generateImage = async () => {
     setGenerateImageLoading(true);
     setError("");
     try {
@@ -97,20 +112,12 @@ const generateImage = async () => {
       }
     } catch (error) {
       console.error("Frontend error:", error);
-      let errorMessage = "Failed to generate image";
-      if (error.response) {
-        errorMessage =
-          error.response.data?.message ||
-          `Server error: ${error.response.status}`;
-      } else if (error.request) {
-        errorMessage = "No response from server. Please check your connection.";
-      } else {
-        errorMessage = error.message;
-      }
+      const errorMessage = getClientErrorMessage(
+        error,
+        "Failed to generate image"
+      );
       setError(errorMessage);
     } finally {
-      // This is the crucial part:
-      // Ensure the loading state is turned off after the attempt.
       setGenerateImageLoading(false);
     }
   };
@@ -122,7 +129,7 @@ const generateImage = async () => {
       await CreatePost(post);
       navigate("/");
     } catch (error) {
-      setError(error?.response?.data?.message || "Failed to post image");
+      setError(getClientErrorMessage(error, "Failed to post image"));
     }
     setcreatePostLoading(false);
   };
@@ -169,7 +176,7 @@ const generateImage = async () => {
         <Button
           text="Post Image"
           leftIcon={<CreateRounded />}
-          type="secondary"
+          variant="secondary"
           flex
           isDisabled={
             post.name === "" || post.photo === "" || post.prompt === ""

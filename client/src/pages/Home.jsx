@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useDeferredValue, useEffect, useState } from "react";
 import styled from "styled-components";
 import SearchBar from "../components/SearchBar";
 import ImageCard from "../components/cards/ImageCard";
 import { GetPosts } from "../api";
-import { CircularProgress } from "@mui/material";
 
 const Container = styled.div`
-  padding: 30px 30px 160px;
+  padding: 32px 24px 120px;
   min-height: 100%;
   overflow-y: auto;
   display: flex;
@@ -26,49 +25,121 @@ const Container = styled.div`
   animation: fadeIn 0.5s ease;
 
   @media (max-width: 768px) {
-    padding: 16px 10px 100px;
+    padding: 18px 12px 96px;
   }
-`;
-
-const HeadLine = styled.div`
-  font-size: 30px;
-  font-weight: 600;
-  text-align: center;
-  color: ${({ theme }) => theme.text_primary};
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-
-  @media (max-width: 600px) {
-    font-size: 22px;
-  }
-`;
-
-const Span = styled.div`
-  font-size: 28px;
-  font-weight: 800;
-  background: linear-gradient(
-    90deg,
-    ${({ theme }) => theme.primary},
-    ${({ theme }) => theme.secondary}
-  );
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: float 2s ease-in-out infinite;
 `;
 
 const Wrapper = styled.div`
   width: 100%;
-  max-width: 1400px;
-  padding: 32px 0;
+  max-width: 1280px;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  gap: 24px;
+`;
+
+const Header = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 8px;
+
+  @media (max-width: 768px) {
+    gap: 8px;
+  }
+`;
+
+const Title = styled.h1`
+  margin: 0;
+  font-size: 34px;
+  font-weight: 700;
+  color: ${({ theme }) => theme.text_primary};
+  letter-spacing: -0.02em;
+
+  @media (max-width: 600px) {
+    font-size: 28px;
+  }
+`;
+
+const Subtitle = styled.p`
+  margin: 0;
+  max-width: 720px;
+  color: ${({ theme }) => theme.text_secondary};
+  font-size: 15px;
+  line-height: 1.7;
+`;
+
+const Toolbar = styled.div`
+  width: 100%;
+  display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 0 0 8px;
+
+  @media (max-width: 768px) {
+    align-items: stretch;
+  }
+`;
+
+const SearchWrap = styled.div`
+  flex: 1 1 520px;
+  min-width: min(100%, 280px);
+`;
+
+const ToolbarMeta = styled.div`
+  flex: 0 1 auto;
+  color: ${({ theme }) => theme.text_secondary};
+  font-size: 14px;
+  white-space: nowrap;
+
+  @media (max-width: 768px) {
+    white-space: normal;
+  }
+`;
+
+const ResultsHeader = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding-top: 4px;
+`;
+
+const ResultsTitleGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+`;
+
+const ResultsTitle = styled.h2`
+  margin: 0;
+  color: ${({ theme }) => theme.text_primary};
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+`;
+
+const ResultsHint = styled.div`
+  color: ${({ theme }) => theme.text_secondary};
+  font-size: 14px;
+`;
+
+const ResultsCount = styled.div`
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: ${({ theme }) => theme.bgDark + "70"};
+  color: ${({ theme }) => theme.text_primary};
+  font-size: 13px;
+  font-weight: 600;
 `;
 
 const CardWrapper = styled.div`
+  width: 100%;
   display: grid;
-  gap: 24px;
+  gap: 26px;
 
   @media (min-width: 1200px) {
     grid-template-columns: repeat(4, 1fr);
@@ -79,7 +150,50 @@ const CardWrapper = styled.div`
   }
 
   @media (max-width: 639px) {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
+  }
+`;
+
+const EmptyState = styled.div`
+  width: 100%;
+  padding: 40px 28px;
+  border-radius: 20px;
+  text-align: center;
+  background: ${({ theme }) => theme.card};
+  border: 1px solid ${({ theme }) => theme.text_secondary + "20"};
+  color: ${({ theme }) => theme.text_secondary};
+  box-shadow: 0 12px 32px ${({ theme }) => theme.shadow};
+`;
+
+const EmptyTitle = styled.div`
+  color: ${({ theme }) => theme.text_primary};
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 10px;
+`;
+
+const LoadingGrid = styled(CardWrapper)``;
+
+const SkeletonCard = styled.div`
+  min-height: 260px;
+  border-radius: 24px;
+  background: linear-gradient(
+    90deg,
+    ${({ theme }) => theme.card} 0%,
+    ${({ theme }) => theme.bgLight} 50%,
+    ${({ theme }) => theme.card} 100%
+  );
+  background-size: 220% 100%;
+  animation: shimmer 1.6s linear infinite;
+  box-shadow: 0 12px 32px ${({ theme }) => theme.shadow};
+
+  @keyframes shimmer {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
   }
 `;
 
@@ -89,54 +203,102 @@ const Home = () => {
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
   const [filteredPost, setFilteredPost] = useState([]);
+  const deferredSearch = useDeferredValue(search.trim().toLowerCase());
 
-  const getPosts = async () => {
-    setLoading(true);
-    await GetPosts()
-      .then((res) => {
-        setPosts(res?.data?.data);
-        setFilteredPost(res?.data?.data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        setError(error?.response?.data?.message);
-        setLoading(false);
-      });
+  const getPostsErrorMessage = (error) => {
+    if (error.response) {
+      return error.response.data?.message || "Failed to load posts.";
+    }
+
+    if (error.request) {
+      return "Backend is not running on port 8080. Start the server and refresh.";
+    }
+
+    return error.message || "Failed to load posts.";
   };
 
   useEffect(() => {
-    getPosts();
+    const loadPosts = async () => {
+      setLoading(true);
+      setError("");
+
+      await GetPosts()
+        .then((res) => {
+          setPosts(res?.data?.data);
+          setFilteredPost(res?.data?.data);
+          setLoading(false);
+        })
+        .catch((error) => {
+          setError(getPostsErrorMessage(error));
+          setLoading(false);
+        });
+    };
+
+    loadPosts();
   }, []);
 
   useEffect(() => {
-    if (!search) {
+    if (!deferredSearch) {
       setFilteredPost(posts);
+      return;
     }
+
     const filteredPosts = posts.filter((post) => {
-      const promptMatch = post?.prompt?.toLowerCase().includes(search);
-      const authorMatch = post?.author?.toLowerCase().includes(search);
+      const promptMatch = post?.prompt
+        ?.toLowerCase()
+        .includes(deferredSearch);
+      const authorMatch = post?.name?.toLowerCase().includes(deferredSearch);
       return promptMatch || authorMatch;
     });
 
-    if (search) {
-      setFilteredPost(filteredPosts);
-    }
-  }, [posts, search]);
+    setFilteredPost(filteredPosts);
+  }, [deferredSearch, posts]);
 
   return (
     <Container>
-      <HeadLine>
-        Explore Popular Posts in the Community!
-        <Span>⦾ Generated with AI ⦾</Span>
-      </HeadLine>
-      <SearchBar
-        search={search}
-        handleChange={(e) => setSearch(e.target.value)}
-      />
       <Wrapper>
-        {error && <div style={{ color: "red" }}>{error}</div>}
+        <Header>
+          <Title>Community Creations</Title>
+          <Subtitle>
+            Browse AI-generated images, search by prompt or creator, and keep
+            the gallery experience simple.
+          </Subtitle>
+        </Header>
+        <Toolbar>
+          <SearchWrap>
+            <SearchBar
+              search={search}
+              handleChange={(e) => setSearch(e.target.value)}
+              placeholder="Search by prompt or creator"
+            />
+          </SearchWrap>
+          <ToolbarMeta>
+            {error
+              ? error
+              : deferredSearch
+                ? `Showing results for "${deferredSearch}"`
+                : "All posts"}
+          </ToolbarMeta>
+        </Toolbar>
+        <ResultsHeader>
+          <ResultsTitleGroup>
+            <ResultsTitle>Latest posts</ResultsTitle>
+            <ResultsHint>
+              {loading
+                ? "Loading community posts..."
+                : "Updated from the latest shared prompts."}
+            </ResultsHint>
+          </ResultsTitleGroup>
+          <ResultsCount>
+            {filteredPost.length} result{filteredPost.length === 1 ? "" : "s"}
+          </ResultsCount>
+        </ResultsHeader>
         {loading ? (
-          <CircularProgress sx={{ color: "var(--primary)", marginTop: "32px" }} />
+          <LoadingGrid>
+            {Array.from({ length: 8 }).map((_, index) => (
+              <SkeletonCard key={index} />
+            ))}
+          </LoadingGrid>
         ) : (
           <CardWrapper>
             {filteredPost.length > 0 ? (
@@ -145,7 +307,13 @@ const Home = () => {
                 .reverse()
                 .map((item, index) => <ImageCard key={index} item={item} />)
             ) : (
-              <>No Posts Found!!</>
+              <EmptyState>
+                <EmptyTitle>
+                  {error ? "Gallery unavailable" : "No posts found"}
+                </EmptyTitle>
+                {error ||
+                  "Try a different search term or generate a new image to populate the feed."}
+              </EmptyState>
             )}
           </CardWrapper>
         )}

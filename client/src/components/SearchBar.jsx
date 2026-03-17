@@ -53,13 +53,13 @@ const SearchIcon = styled(SearchOutlined)`
   }
 `;
 
-const SearchBar = ({ search, handleChange }) => {
+const SearchBar = ({ search, handleChange, placeholder = "Search by prompt..." }) => {
   return (
     <SearchBarContainer>
       <SearchIcon />
       <StyledInput
         type="text"
-        placeholder="Search by prompt..."
+        placeholder={placeholder}
         value={search}
         onChange={handleChange}
       />

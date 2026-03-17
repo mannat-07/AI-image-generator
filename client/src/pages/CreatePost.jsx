@@ -53,8 +53,6 @@ const CreatePost = () => {
     photo: "",
   });
 
-    console.log("Current photo state in CreatePost:", post.photo);
-
   return (
     <Container>
       <Wrapper>

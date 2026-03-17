@@ -6,7 +6,7 @@ import { AddRounded, WebRounded } from "@mui/icons-material";
 
 const Container = styled.div`
   width: 100%;
-  background: ${({ theme }) => theme.navbar};
+  background: ${({ theme }) => theme.navbar + "dd"};
   color: ${({ theme }) => theme.menu_primary_text};
   font-weight: bold;
   font-size: 22px;
@@ -14,10 +14,9 @@ const Container = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 16px 48px;
-  margin-rignt: 30px;
   border-radius: 0px 0px 18px 18px;
   box-shadow: 0 8px 20px ${({ theme }) => theme.shadow};
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(14px);
   position: sticky;
   top: 0;
   z-index: 99;
@@ -30,10 +29,14 @@ const Container = styled.div`
 `;
 
 const Logo = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
   font-weight: 700;
   font-size: 26px;
   color: ${({ theme }) => theme.text_primary};
   transition: 0.3s ease;
+  cursor: pointer;
 
   &:hover {
     color: ${({ theme }) => theme.primary};
@@ -43,6 +46,13 @@ const Logo = styled.div`
   @media only screen and (max-width: 600px) {
     font-size: 20px;
   }
+`;
+
+const Mark = styled.span`
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: ${({ theme }) => theme.text_secondary};
 `;
 
 const Navbar = () => {
@@ -55,13 +65,16 @@ const Navbar = () => {
 
   return (
     <Container>
-      <Logo>PRO GO</Logo>
+      <Logo onClick={gotoHome}>
+        PRO GO
+        <Mark>AI Image Studio</Mark>
+      </Logo>
       {path[1] === "post" ? (
         <Button
           text="Explore Posts"
           leftIcon={<WebRounded style={{ fontSize: "18px" }} />}
           onClick={gotoHome}
-          type="secondary"
+          variant="secondary"
         />
       ) : (
         <Button
